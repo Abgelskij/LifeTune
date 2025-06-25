@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">LifeTune</string>
+    <string name="repetition_daily">Every day</string>
+    <string name="repetition_weekly">7 days</string>
+    <string name="repetition_one_time">One time only</string>
+    <string name="select_wakeup_time">Wake Up Time</string>
+    <string name="select_bedtime">Bedtime</string>
+    <string name="ok">OK</string>
+    <string name="cancel">CANCEL</string>
+</resources>

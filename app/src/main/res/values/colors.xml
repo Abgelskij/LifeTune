@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="background_dark">#1E1E1E</color>
+    <color name="toolbar_background">#111113</color>
+    <color name="your_background">#111113</color>
+    <color name="card_background">#151618</color>
+    <color name="red">#FF5252</color>
+    <color name="green">#4CAF50</color>
+    <color name="sleep_color">#4CAF50</color>
+    <color name="awake_color">#1E1E1E</color>
+    <color name="time_marker_color">#BBBBBB</color>
+    <color name="white">#FFFFFF</color>
+    <color name="orange">#cc7a00</color>
+</resources>

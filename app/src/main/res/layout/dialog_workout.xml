@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#1E1E1E">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/title_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Workout Title"
+        app:hintTextColor="#CCCCCC"
+        app:boxStrokeColor="#3d3d3d"
+        app:boxBackgroundColor="#252525">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_workout_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Description"
+        app:hintTextColor="#CCCCCC"
+        app:boxStrokeColor="#3d3d3d"
+        app:boxBackgroundColor="#252525">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_workout_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Schedule (e.g. Mon, Wed, Fri)"
+        app:hintTextColor="#CCCCCC"
+        app:boxStrokeColor="#3d3d3d"
+        app:boxBackgroundColor="#252525">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_workout_schedule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CANCEL"
+            android:textColor="#3d3d3d"
+            android:backgroundTint="#121212"
+            android:textAllCaps="true"/>
+
+        <Button
+            android:id="@+id/btn_save_workout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="SAVE"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#3d3d3d"
+            android:textAllCaps="true"/>
+    </LinearLayout>
+</LinearLayout>
