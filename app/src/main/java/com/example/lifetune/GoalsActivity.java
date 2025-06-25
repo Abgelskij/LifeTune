@@ -5,11 +5,16 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -250,6 +255,32 @@ public class GoalsActivity extends AppCompatActivity {
         btnCategoryHealth.setOnClickListener(categoryListener);
         btnCategorySport.setOnClickListener(categoryListener);
 
+        // Добавление подсказок для категорий
+        View.OnLongClickListener tooltipListener = v -> {
+            String message = "";
+            if (v == btnCategoryMeditation) {
+                message = "Медитация";
+            } else if (v == btnCategoryRead) {
+                message = "Чтение";
+            } else if (v == btnCategorySleep) {
+                message = "Сон";
+            } else if (v == btnCategoryHealth) {
+                message = "Здоровье";
+            } else if (v == btnCategorySport) {
+                message = "Спорт";
+            }
+if (!message.isEmpty()) {
+                showCustomTooltip(v, message);
+            }
+            return true;
+        };
+
+        btnCategoryMeditation.setOnLongClickListener(tooltipListener);
+        btnCategoryRead.setOnLongClickListener(tooltipListener);
+        btnCategorySleep.setOnLongClickListener(tooltipListener);
+        btnCategoryHealth.setOnLongClickListener(tooltipListener);
+        btnCategorySport.setOnLongClickListener(tooltipListener);
+
         // Обработчик повторения
         radioGroupRepetition.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.radio_daily) {
@@ -268,6 +299,58 @@ public class GoalsActivity extends AppCompatActivity {
         });
     }
 
+    private void showCustomTooltip(View anchorView, String message) {
+        if (anchorView == null) return;
+
+        // 1. Создаем и настраиваем View
+        View tooltipView = LayoutInflater.from(this).inflate(R.layout.tooltip_layout, null);
+        TextView textView = tooltipView.findViewById(R.id.tooltip_text);
+        textView.setText(message != null ? message : "Подсказка");
+
+        // 2. Обязательно делаем предварительное измерение
+        tooltipView.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+
+        // 3. Настройка PopupWindow
+        PopupWindow popupWindow = new PopupWindow(
+                tooltipView,
+                tooltipView.getMeasuredWidth(), // Используем измеренные размеры
+                tooltipView.getMeasuredHeight(),
+                true
+        );
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popupWindow.setOutsideTouchable(true);
+
+        // 4. Позиционирование
+        int[] location = new int[2];
+        anchorView.getLocationOnScreen(location);
+        int xPos = location[0] + (anchorView.getWidth() - tooltipView.getMeasuredWidth()) / 2;
+        int yPos = location[1] - tooltipView.getMeasuredHeight() - dpToPx(8);
+
+        // 5. Начальное состояние для анимации
+        tooltipView.setAlpha(0f);
+        tooltipView.setScaleX(0.5f);
+        tooltipView.setScaleY(0.5f);
+        tooltipView.setTranslationY(dpToPx(20)); // Начальное смещение вниз
+
+        // 6. Показываем и анимируем
+        popupWindow.showAtLocation(anchorView, Gravity.NO_GRAVITY, xPos, yPos);
+
+        tooltipView.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .translationY(0f)
+                .setDuration(300)
+                .setInterpolator(new OvershootInterpolator(0.5f))
+                .start();
+    }
+
+    private int dpToPx(int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
+    }
     private void resetCategoryButtons() {
         btnCategoryMeditation.setSelected(false);
         btnCategoryRead.setSelected(false);

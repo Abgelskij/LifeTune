@@ -43,7 +43,6 @@ dependencies {
     annotationProcessor ("androidx.room:room-compiler:2.6.1")
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation ("androidx.media:media:1.7.0")
-
     // Другие зависимости...
     // Lifecycle components (для LiveData)
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
