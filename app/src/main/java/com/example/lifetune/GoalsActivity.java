@@ -6,8 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.app.AlertDialog;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -34,7 +32,7 @@ public class GoalsActivity extends AppCompatActivity {
     private GoalAdapter adapter;
     private GoalViewModel goalViewModel;
     private EditText etGoalText;
-    private ImageButton btnCategoryMeditation, btnCategoryRead, btnCategorySleep;
+    private ImageButton btnCategoryMeditation, btnCategoryRead, btnCategorySleep, btnCategoryHealth, btnCategorySport;
     private RadioGroup radioGroupRepetition;
     private Button btnAddGoal, btnShowAddGoal;
     private String selectedCategory = null;
@@ -126,6 +124,8 @@ public class GoalsActivity extends AppCompatActivity {
         btnCategoryMeditation = findViewById(R.id.btn_category_meditation);
         btnCategoryRead = findViewById(R.id.btn_category_read);
         btnCategorySleep = findViewById(R.id.btn_category_sleep);
+        btnCategoryHealth = findViewById(R.id.btn_category_health);
+        btnCategorySport = findViewById(R.id.btn_category_sport);
         radioGroupRepetition = findViewById(R.id.radio_group_repetition);
         btnAddGoal = findViewById(R.id.btn_add_goal);
         btnShowAddGoal = findViewById(R.id.btn_show_add_goal);
@@ -225,9 +225,15 @@ public class GoalsActivity extends AppCompatActivity {
             } else if (v == btnCategoryRead) {
                 selectedCategory = "read";
                 btnCategoryRead.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
-            } else if (v == btnCategorySleep) {
+} else if (v == btnCategorySleep) {
                 selectedCategory = "sleep";
                 btnCategorySleep.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+            } else if (v == btnCategoryHealth) {
+                selectedCategory = "health";
+                btnCategoryHealth.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+            } else if (v == btnCategorySport) {
+                selectedCategory = "sport";
+                btnCategorySport.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
             }
         };
 
@@ -241,7 +247,8 @@ public class GoalsActivity extends AppCompatActivity {
         btnCategoryMeditation.setOnClickListener(categoryListener);
         btnCategoryRead.setOnClickListener(categoryListener);
         btnCategorySleep.setOnClickListener(categoryListener);
-        // Обработчики категорий
+        btnCategoryHealth.setOnClickListener(categoryListener);
+        btnCategorySport.setOnClickListener(categoryListener);
 
         // Обработчик повторения
         radioGroupRepetition.setOnCheckedChangeListener((group, checkedId) -> {
@@ -265,12 +272,15 @@ public class GoalsActivity extends AppCompatActivity {
         btnCategoryMeditation.setSelected(false);
         btnCategoryRead.setSelected(false);
         btnCategorySleep.setSelected(false);
+        btnCategoryHealth.setSelected(false);
+        btnCategorySport.setSelected(false);
 
         // Сбрасываем подсветку
         btnCategoryMeditation.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
         btnCategoryRead.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
         btnCategorySleep.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
-
+        btnCategoryHealth.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+        btnCategorySport.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
     }
 
     private void addNewGoal() {

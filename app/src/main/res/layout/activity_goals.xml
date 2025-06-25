@@ -12,6 +12,7 @@
         android:background="@color/toolbar_background"
         app:title="Goals"
         app:layout_constraintTop_toTopOf="parent"/>
+
     <TextView
         android:id="@+id/tv_no_goals"
         android:layout_width="wrap_content"
@@ -28,11 +29,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/btn_show_add_goal"
+        android:layout_below="@id/toolbar"
         android:clipToPadding="false"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingHorizontal="8dp"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_show_add_goal"
@@ -145,6 +147,28 @@
                     android:padding="8dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/moon_svgrepo_com"
+                    app:tint="#FFFFFF" />
+
+                <ImageButton
+                    android:id="@+id/btn_category_health"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:background="@drawable/category_button_background"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_health"
+                    app:tint="#FFFFFF" />
+
+                <ImageButton
+                    android:id="@+id/btn_category_sport"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:background="@drawable/category_button_background"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_sport"
                     app:tint="#FFFFFF" />
             </LinearLayout>
 

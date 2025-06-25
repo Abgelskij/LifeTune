@@ -77,6 +77,14 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
                 holder.categoryIcon.setImageResource(R.drawable.moon_svgrepo_com);
                 holder.categoryIcon.setVisibility(View.VISIBLE);
                 break;
+            case "health":
+                holder.categoryIcon.setImageResource(R.drawable.icon_health);
+                holder.categoryIcon.setVisibility(View.VISIBLE);
+                break;
+            case "sport":
+                holder.categoryIcon.setImageResource(R.drawable.icon_sport);
+                holder.categoryIcon.setVisibility(View.VISIBLE);
+                break;
             default:
                 holder.categoryIcon.setVisibility(View.GONE);
         }
