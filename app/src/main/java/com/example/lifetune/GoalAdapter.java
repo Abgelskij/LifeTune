@@ -1,5 +1,8 @@
 package com.example.lifetune;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.content.res.ColorStateList;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
@@ -9,6 +12,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -93,16 +97,28 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
                 holder.categoryIcon.setVisibility(View.GONE);
         }
 
-        // Установка статуса цели
+        // Рассчитываем текущий прогресс
+        int currentProgress = goal.calculateProgress();
+
+        // Установка статуса цели и прогресс-бара
         if (goal.isCompleted()) {
             holder.statusTextView.setText("Завершено");
             holder.statusTextView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
+            holder.progressBar.setProgressTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(holder.itemView.getContext(), R.color.green)));
+            holder.progressBar.setProgress(100);
         } else if (goal.isOverdue()) {
             holder.statusTextView.setText("Просрочено");
             holder.statusTextView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.red));
+            holder.progressBar.setProgressTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(holder.itemView.getContext(), R.color.red)));
+            holder.progressBar.setProgress(100);
         } else {
-            holder.statusTextView.setText("В процессе");
+            holder.statusTextView.setText("В процессе (" + goal.getRemainingTime() + ")");
             holder.statusTextView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.orange));
+            holder.progressBar.setProgressTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(holder.itemView.getContext(), R.color.orange)));
+            holder.progressBar.setProgress(currentProgress);
         }
 
         holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -111,14 +127,56 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
                 listener.onGoalChecked(goal, isChecked);
             }
 
-            // Обновление статуса при изменении чекбокса
             if (isChecked) {
                 holder.statusTextView.setText("Завершено");
-                holder.statusTextView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
+                holder.statusTextView.setTextColor(ContextCompat.getColor(
+                        holder.itemView.getContext(), R.color.green));
+
+                // Анимация изменения цвета
+                ValueAnimator colorAnimation = ValueAnimator.ofArgb(
+                        ContextCompat.getColor(holder.itemView.getContext(), R.color.orange),
+                        ContextCompat.getColor(holder.itemView.getContext(), R.color.green)
+                );
+                colorAnimation.setDuration(300);
+                colorAnimation.addUpdateListener(animator -> {
+                    holder.progressBar.setProgressTintList(
+                            ColorStateList.valueOf((Integer) animator.getAnimatedValue())
+                    );
+                });
+                colorAnimation.start();
+
+                // Анимация заполнения прогресса
+                ObjectAnimator progressAnimator = ObjectAnimator.ofInt(
+                        holder.progressBar, "progress", holder.progressBar.getProgress(), 100
+                );
+                progressAnimator.setDuration(300);
+                progressAnimator.start();
 
             } else {
-                holder.statusTextView.setText("В процессе");
-                holder.statusTextView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.orange));
+                int progress = goal.calculateProgress();
+                holder.statusTextView.setText("В процессе (" + goal.getRemainingTime() + ")");
+                holder.statusTextView.setTextColor(ContextCompat.getColor(
+                        holder.itemView.getContext(), R.color.orange));
+
+                // Анимация изменения цвета
+                ValueAnimator colorAnimation = ValueAnimator.ofArgb(
+                        ContextCompat.getColor(holder.itemView.getContext(), R.color.green),
+                        ContextCompat.getColor(holder.itemView.getContext(), R.color.orange)
+                );
+                colorAnimation.setDuration(300);
+                colorAnimation.addUpdateListener(animator -> {
+                    holder.progressBar.setProgressTintList(
+                            ColorStateList.valueOf((Integer) animator.getAnimatedValue())
+                    );
+                });
+                colorAnimation.start();
+
+                // Анимация заполнения прогресса
+                ObjectAnimator progressAnimator = ObjectAnimator.ofInt(
+                        holder.progressBar, "progress", holder.progressBar.getProgress(), progress
+                );
+                progressAnimator.setDuration(300);
+                progressAnimator.start();
             }
         });
     }
@@ -159,6 +217,7 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
         final TextView repetitionTextView;
         final ImageView categoryIcon;
         final TextView statusTextView;
+        final ProgressBar progressBar;
         final GoalAdapter adapter;
 
         public GoalViewHolder(@NonNull View itemView, GoalAdapter adapter) {
@@ -169,7 +228,7 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
             repetitionTextView = itemView.findViewById(R.id.tv_repetition);
             categoryIcon = itemView.findViewById(R.id.iv_category_icon);
             statusTextView = itemView.findViewById(R.id.tv_status);
-
+            progressBar = itemView.findViewById(R.id.progress_bar);
             itemView.setOnLongClickListener(v -> {
                 adapter.toggleDeleteMode();
                 return true;

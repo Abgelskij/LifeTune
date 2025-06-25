@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,10 +24,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.os.Handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.annotation.NonNull;
 
@@ -44,12 +48,24 @@ public class GoalsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView tvNoGoals;
     private NotificationHelper notificationHelper;
-
+    private Handler progressHandler;
+    private Runnable progressUpdater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goals);
+        progressHandler = new Handler(Looper.getMainLooper());
+
+        progressUpdater = new Runnable() {
+            @Override
+            public void run() {
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged(); // Обновляем прогресс
+                }
+                progressHandler.postDelayed(this, TimeUnit.MINUTES.toMillis(1)); // Обновляем каждую минуту
+            }
+        };
 
         // Инициализация ViewModel (один раз!)
         GoalDao goalDao = GoalDatabase.getDatabase(this).goalDao();
@@ -402,13 +418,19 @@ if (!message.isEmpty()) {
             btnShowAddGoal.setVisibility(View.VISIBLE);
         } else {
             // Визуальная индикация необходимости ввода текста
-            etGoalText.setError("Введите текст цели");
+            etGoalText.setError("Введите название цели");
         }
     }
     @Override
     protected void onResume() {
         super.onResume();
         checkOverdueGoals();
+        progressHandler.post(progressUpdater);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        progressHandler.removeCallbacks(progressUpdater); // Останавливаем при паузе
     }
 
     private void checkOverdueGoals() {
@@ -423,6 +445,8 @@ if (!message.isEmpty()) {
             }
         }).start();
     }
+
+
     private void clearInputFields() {
         etGoalText.setText("");
         selectedCategory = null;

@@ -13,6 +13,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Основное содержимое карточки -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,7 +51,6 @@
                     android:textSize="14sp"/>
             </LinearLayout>
 
-            <!-- Перенесенная иконка категории -->
             <ImageView
                 android:id="@+id/iv_category_icon"
                 android:layout_width="24dp"
@@ -59,7 +59,6 @@
                 android:scaleType="fitCenter"
                 app:tint="@color/white"/>
 
-            <!-- Добавленный статус цели -->
             <TextView
                 android:id="@+id/tv_status"
                 android:layout_width="wrap_content"
@@ -68,5 +67,16 @@
                 android:textColor="@color/orange"
                 android:textSize="12sp"/>
         </LinearLayout>
+
+        <!-- Прогресс-бар должен быть ВНЕ основного контейнера -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@style/ProgressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="8dp"
+            android:progress="100"
+            android:progressTint="@color/orange"
+            android:progressBackgroundTint="#303030"/>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -80,7 +80,65 @@ public class GoalItem {
         this(UUID.randomUUID().toString(), text, completed, category, repetition, System.currentTimeMillis());
     }
 
+    // В класс GoalItem добавим метод для расчета прогресса
+    public int calculateProgress() {
+        if (isCompleted()) {
+            return 100; // Если цель выполнена - 100%
+        }
 
+        long currentTime = System.currentTimeMillis();
+        long elapsed = currentTime - createdAt;
+        long totalDuration = 0;
+
+        switch (repetition) {
+            case "День":
+                totalDuration = TimeUnit.HOURS.toMillis(24);
+                break;
+            case "Неделя":
+                totalDuration = TimeUnit.DAYS.toMillis(7);
+                break;
+            case "Месяц":
+                totalDuration = TimeUnit.DAYS.toMillis(30);
+                break;
+            default:
+                return 0;
+        }
+
+        // Прогресс от 0 до 100
+        int progress = (int) ((elapsed * 100) / totalDuration);
+        return Math.min(Math.max(progress, 0), 100); // Ограничиваем 0-100%
+    }
+    public String getRemainingTime() {
+        if (isCompleted()) return "Выполнено";
+
+        long currentTime = System.currentTimeMillis();
+        long deadline = 0;
+
+        switch (repetition) {
+            case "День":
+                deadline = createdAt + TimeUnit.HOURS.toMillis(24);
+                break;
+            case "Неделя":
+                deadline = createdAt + TimeUnit.DAYS.toMillis(7);
+                break;
+            case "Месяц":
+                deadline = createdAt + TimeUnit.DAYS.toMillis(30);
+                break;
+            default:
+                return "";
+        }
+
+        long remaining = deadline - currentTime;
+        if (remaining <= 0) return "Просрочено";
+
+        if (repetition.equals("День")) {
+            long hours = TimeUnit.MILLISECONDS.toHours(remaining);
+            return "Осталось: " + hours + " ч";
+        } else {
+            long days = TimeUnit.MILLISECONDS.toDays(remaining);
+            return "Осталось: " + days + " дн";
+        }
+    }
     // Геттеры и сеттеры
     @NonNull
     public String getId() {
