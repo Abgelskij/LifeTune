@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
@@ -44,6 +43,7 @@ public class GoalsActivity extends AppCompatActivity {
     private String selectedRepetition = "Daily";
     private Toolbar toolbar;
     private TextView tvNoGoals;
+    private NotificationHelper notificationHelper;
 
 
     @Override
@@ -56,6 +56,9 @@ public class GoalsActivity extends AppCompatActivity {
         GoalRepository repository = new GoalRepository(goalDao);
         goalViewModel = new ViewModelProvider(this,
                 new GoalViewModel.Factory(repository)).get(GoalViewModel.class);
+        
+        // Инициализация NotificationHelper
+        notificationHelper = new NotificationHelper(this);
 
         // Настройка RecyclerView (используем rv_goals)
         RecyclerView recyclerView = findViewById(R.id.rv_goals);
@@ -79,7 +82,7 @@ public class GoalsActivity extends AppCompatActivity {
             @Override
             public void onGoalDeleted(GoalItem goal) {
                 goalViewModel.delete(goal);
-                Toast.makeText(GoalsActivity.this, "Цель удалена!", Toast.LENGTH_SHORT).show();
+                notificationHelper.showGoalDeletedNotification();
             }
         });
 
@@ -162,7 +165,7 @@ public class GoalsActivity extends AppCompatActivity {
             @Override
             public void onGoalDeleted(GoalItem goal) {
                 goalViewModel.delete(goal);
-                Toast.makeText(GoalsActivity.this, "Цель удалена!", Toast.LENGTH_SHORT).show();
+                notificationHelper.showGoalDeletedNotification();
             }
         });
 
@@ -207,7 +210,7 @@ public class GoalsActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(v -> {
             GoalItem goalToDelete = adapter.getGoals().get(position);
             goalViewModel.delete(goalToDelete);
-            Toast.makeText(GoalsActivity.this, "Цель удалена!", Toast.LENGTH_SHORT).show();
+            notificationHelper.showGoalDeletedNotification();
             dialog.dismiss();
         });
 
@@ -297,6 +300,12 @@ if (!message.isEmpty()) {
             addNewGoal();
 
         });
+
+        // Обработчик кнопки удаления всех целей
+        ImageButton btnDeleteAllGoals = findViewById(R.id.btn_delete_all_goals);
+        btnDeleteAllGoals.setOnClickListener(v -> {
+            showDeleteAllGoalsConfirmationDialog();
+        });
     }
 
     private void showCustomTooltip(View anchorView, String message) {
@@ -370,8 +379,9 @@ if (!message.isEmpty()) {
         String goalText = etGoalText.getText().toString().trim();
         if (!goalText.isEmpty()) {
             if (selectedCategory == null) {
-                Toast.makeText(this, "Please select a category", Toast.LENGTH_SHORT).show();
-                return;
+                // Можно добавить визуальную индикацию необходимости выбора категории
+                // или просто присвоить дефолтную категорию
+                selectedCategory = "meditation"; // Дефолтная категория
             }
 
             GoalItem newGoal = new GoalItem(
@@ -391,7 +401,8 @@ if (!message.isEmpty()) {
             addGoalCard.setVisibility(View.GONE);
             btnShowAddGoal.setVisibility(View.VISIBLE);
         } else {
-            Toast.makeText(this, "Please enter a goal", Toast.LENGTH_SHORT).show();
+            // Визуальная индикация необходимости ввода текста
+            etGoalText.setError("Введите текст цели");
         }
     }
     @Override
@@ -417,5 +428,40 @@ if (!message.isEmpty()) {
         selectedCategory = null;
         resetCategoryButtons();
         radioGroupRepetition.check(R.id.radio_daily);
+    }
+
+    private void showDeleteAllGoalsConfirmationDialog() {
+        final Dialog dialog = new Dialog(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.custom_delete_dialog, null);
+        dialog.setContentView(dialogView);
+
+        TextView titleTextView = dialogView.findViewById(R.id.dialog_title);
+        TextView messageTextView = dialogView.findViewById(R.id.dialog_message);
+        MaterialButton cancelButton = dialogView.findViewById(R.id.dialog_cancel_button);
+        MaterialButton deleteButton = dialogView.findViewById(R.id.dialog_delete_button);
+
+        titleTextView.setText("Удалить все цели?");
+        messageTextView.setText("Вы уверены, что хотите удалить все цели? Это действие нельзя отменить.");
+
+        cancelButton.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        deleteButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            
+            // Запускаем анимацию удаления
+            RecyclerView recyclerView = findViewById(R.id.rv_goals);
+            adapter.animateDeleteAll(recyclerView, () -> {
+                // После завершения анимации удаляем из базы данных
+                goalViewModel.deleteAllGoals();
+                notificationHelper.showAllGoalsDeletedNotification();
+            });
+        });
+
+        // Установим прозрачный фон для окна диалога
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
     }
 }

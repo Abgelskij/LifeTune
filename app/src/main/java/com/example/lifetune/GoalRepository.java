@@ -44,4 +44,8 @@ public class GoalRepository {
     public void updateRepetition(String id, String repetition) {
         new Thread(() -> goalDao.updateRepetition(id, repetition)).start();
     }
+
+    public void deleteAllGoals() {
+        new Thread(() -> goalDao.deleteAllGoals()).start();
+    }
 }

@@ -1,8 +1,12 @@
 package com.example.lifetune;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -196,6 +200,54 @@ public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.GoalViewHolder
         @Override
         public boolean areContentsTheSame(int oldPos, int newPos) {
             return oldList.get(oldPos).equals(newList.get(newPos));
+        }
+    }
+
+    public void animateDeleteAll(RecyclerView recyclerView, Runnable onAnimationComplete) {
+        if (goals.isEmpty()) {
+            if (onAnimationComplete != null) {
+                onAnimationComplete.run();
+            }
+            return;
+        }
+
+        final Handler handler = new Handler(Looper.getMainLooper());
+        final int totalItems = getItemCount();
+        final int[] animatedCount = {0};
+
+        for (int i = 0; i < totalItems; i++) {
+            final int position = i;
+            handler.postDelayed(() -> {
+                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
+                
+                if (viewHolder != null && viewHolder.itemView != null) {
+                    Animation slideOut = AnimationUtils.loadAnimation(
+                        viewHolder.itemView.getContext(), R.anim.slide_out_right);
+                    
+                    slideOut.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {}
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            animatedCount[0]++;
+                            if (animatedCount[0] == totalItems && onAnimationComplete != null) {
+                                onAnimationComplete.run();
+                            }
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {}
+                    });
+                    
+                    viewHolder.itemView.startAnimation(slideOut);
+                } else {
+                    animatedCount[0]++;
+                    if (animatedCount[0] == totalItems && onAnimationComplete != null) {
+                        onAnimationComplete.run();
+                    }
+                }
+            }, i * 80); // Задержка 80мс между анимациями элементов
         }
     }
 }

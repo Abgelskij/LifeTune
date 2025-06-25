@@ -83,4 +83,8 @@ public class GoalViewModel extends ViewModel {
     public void updateRepetition(String id, String repetition) {
         repository.updateRepetition(id, repetition);
     }
+
+    public void deleteAllGoals() {
+        repository.deleteAllGoals();
+    }
 }
